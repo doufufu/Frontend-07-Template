@@ -24,7 +24,7 @@
 			this.data = data.slice();
 			this.compare = compare || ((a, b) => a - b);
 		}
-		get(){
+		take(){
 			if(!this.data.length)
 				return;
 			let min = this.data[0];
@@ -40,7 +40,7 @@
 			this.data.pop();
 			return min;
 		}
-		set(v){
+		give(v){
 			this.data.push(v);
 		}
 	}
@@ -89,28 +89,28 @@
 	async function findPath(map, start, end){
 		// var queue = [start];
 		let table = Object.create(map);
-		let queue = new Sorted([start], (a,b) => distance(a) - distance(b));
+		let queue = new Sorted([start], (a, b) => distance(a) - distance(b) );
 
 		async function insert(x, y, pre){
 			if(x < 0 || x >= 100 || y < 0 || y >= 100){
 				return;
 			}
-			if(table[y *100 + x]){
+			if(table[y*100 + x]){
 				return;
 			}
-			await sleep(5);
+			// await sleep(5);
 			container.children[y*100+x].style.backgroundColor = "lightgreen";
 			// map[y *100 + x] = 2;
 			table[y *100 + x] = pre;
-			queue.set([x, y]);
+			queue.give([x, y]);
 		}
 
 		function distance(point){
-			return (point[0] - end[0]) **2 +(point[1]-end[1]) **2
+			return (point[0] - end[0]) ** 2 + (point[1] - end[1]) ** 2
 		}
 
 		while(queue.length){
-			let [x, y] = queue.get();
+			let [x, y] = queue.take();
 			if(x === end[0] && y === end[1]){
 				// return true 
 				let path = [];

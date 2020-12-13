@@ -24,7 +24,7 @@
 			this.data = data.slice();
 			this.compare = compare || ((a, b) => a - b);
 		}
-		get(){
+		take(){
 			if(!this.data.length)
 				return;
 			let min = this.data[0];
@@ -40,7 +40,7 @@
 			this.data.pop();
 			return min;
 		}
-		set(v){
+		give(v){
 			this.data.push(v);
 		}
 	}
