@@ -43,10 +43,57 @@
 		give(v){
 			this.data.push(v);
 		}
-		// 不增加这块，就修改115行while 改成while(queue.data.length)
+	}
+
+	class Heap{
+		constructor(data, compare){
+			this.data = data;
+			this.compare = compare;
+		}
+		take(){
+			if(!this.data.length)
+				return;
+			let min = this.data[0];
+			let i = 0;
+
+			while(i < this.data.length){
+				if(i*2+1 >= this.data.length) break;
+				if(i*2+2 >= this.data.length) {
+					this.data[i] = this.data[i*2+1];
+					i=i*2+1
+					break;
+				}
+				if(this.compare(this.data[i*2+1],this.data[i*2+2]) < 0) {
+					this.data[i] = this.data[i*2+1];
+					i=i*2+1
+				}else{
+					this.data[i] = this.data[i*2+2];
+					i=i*2+2
+				}
+			}
+			if(i < this.data.length - 1){
+				this.insertAt(i, this.data.pop())
+			}else{
+				this.data.pop()
+			}
+		}
+		insertAt(i, v){
+			this.data[i] = v;
+			let top = Math.floor((i-1)/2);
+			while(i > 0 && this.compare(v, this.data[top]) < 0){
+				this.data[i] = this.data[top];
+				i = top;
+			}
+			this.data[top] = v;
+		}
+		insert(v){
+			this.insertAt(this.data.length, v);
+		}
 		get length(){
+			console.log(this.data);
 			return this.data.length;
 		}
+
 	}
 
 	let map = localStorage['map']?JSON.parse(localStorage['map']) : Array(10000).fill(0);
@@ -93,7 +140,7 @@
 	async function findPath(map, start, end){
 		// var queue = [start];
 		let table = Object.create(map);
-		let queue = new Sorted([start], (a, b) => distance(a) - distance(b) );
+		let queue = new Heap([start]);
 
 		async function insert(x, y, pre){
 			if(x < 0 || x >= 100 || y < 0 || y >= 100){
@@ -106,7 +153,7 @@
 			container.children[y*100+x].style.backgroundColor = "lightgreen";
 			// map[y *100 + x] = 2;
 			table[y *100 + x] = pre;
-			queue.give([x, y]);
+			queue.insert([x, y]);
 		}
 
 		function distance(point){
