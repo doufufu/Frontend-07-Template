@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<style type="text/css">
+	#dragable{
+		width: 100px;
+		height: 30px;
+		background: #d0d0d0;
+	}
+</style>
+</head>
+<body>
+	<div id="dragable"></div>
+</body>
+<script type="text/javascript">
+	let dragable = document.getElementById('dragable');
+	let baseX = 0, baseY = 0;
+
+
+	// mousemove mouseup事件，需要在mousedown里面去监听，保证前提是鼠标已经按下去才触发。如果用flag判断mousedown，性能差一点，需要多执行一遍函数
+	// 其次，mousemove mouseup需要在document上，不能在dragable上，否则移动快了离开dragable区域，会监听失败
+	dragable.addEventListener("mousedown", function(event){
+		
+		let startX = event.clientX, startY = event.clientY;// 存储鼠标点击起点
+		let up = (event) => {
+			baseX = baseX + event.clientX-startX;
+			baseY = baseY + event.clientY-startY; //存储下次点击的起点
+			document.removeEventListener("mousemove", move)
+			document.removeEventListener("mouseup", move)
+		}
+		let move = (event) =>{
+			console.log(event)
+			dragable.style.transform = `translate(${baseX+event.clientX-startX}px,${baseY+event.clientY-startY}px)`
+		}
+		document.addEventListener("mousemove", move)
+		document.addEventListener("mouseup", up)
+	})
+	let mouse
+</script>
+</html>

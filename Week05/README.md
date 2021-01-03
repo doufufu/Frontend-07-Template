@@ -58,3 +58,15 @@ set(obj, prop, val){
 - 从数据到dom的监听
 - native to reactive
 - 实现0代码编写mvvm监听
+
+### dragable
+```
+// mousemove 、mouseup事件，需要在mousedown里面去监听，保证前提是鼠标已经按下去才触发。
+// 如果用flag判断mousedown，性能差一点，需要多执行一遍函数
+// 其次，mousemove mouseup需要在document上，不能在dragable上，否则移动快了离开dragable区域，会监听失败
+baseX 记录其实原点(0,0)
+startX 记录鼠标原点(event.x, event.y)
+最终移动点
+baseX + startX - current.event.x
+```
+range.insertNode(dragable);// 不需要以前的移除，默认会把原来的元素移除
