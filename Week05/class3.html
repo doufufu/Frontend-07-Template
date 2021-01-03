@@ -1,4 +1,7 @@
 <script type="text/javascript">
+
+	let callbacks = [];
+
 	let object = {
 		a: 1,
 		b: 2
@@ -7,18 +10,27 @@
 	let po = reactive(object)
 
 	// 添加监听，可用addEventListener，也可用effect
+	effect(()=>{
+		// 但存在性能问题，传入100个会都回调。优化：只有在对应变量变化时，再触发函数调用
+		console.log(po.a)
+	})
+
+	function effect(callback){
+		callbacks.push(callback)
+	}
 
 	// vue双向绑定的get和set，实现代理
 	function reactive(object){
 		return new Proxy(object, {
 			set(obj, prop, val){
 				obj[prop] = val
+				for(let callback of callbacks){
+					callback()
+				}
 				return obj[prop]
-				console.log(obj, prop, val);
 			},
 			get(obj, prop){
 				return obj[prop]
-				console.log(obj, prop);
 			}
 		})
 	}

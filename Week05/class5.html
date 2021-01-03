@@ -1,0 +1,72 @@
+<script type="text/javascript">
+
+	let callbacks = new Map();// 替换成new Map，来存储useReactivties, 用object作为key去查reactivties
+
+	let useReactivties = [] // 新增全局变量
+
+	let reactivties = new Map() // 对reactivties存储
+
+	let object = {
+		a: {
+			b: 1
+		},
+		b: 2
+	}
+
+	let po = reactive(object)
+
+	effect(()=>{
+		console.log(po.a)
+	})
+
+	// 获取函数调用了object里的哪些属性
+	function effect(callback){
+		// callbacks.push(callback) 替换
+		// 在effct里去调用一次上面的effct的函数。再在reactiv的get里把它注册进useReactivties里。这样执行完可知道用了哪些变量
+		useReactivties = [];
+		callback();
+		console.log(useReactivties)
+		for(let reactivties of useReactivties){
+			if(!callbacks.has(reactivties[0]))
+				callbacks.set(reactivties[0], new Map())
+			if(!callbacks.get(reactivties[0]).has(reactivties[1]))
+				callbacks.get(reactivties[0]).set(reactivties[1], []);
+			// 排除空的情况
+			callbacks.get(reactivties[0]).get(reactivties[1]).push(callback)
+
+		}
+	}
+
+	function reactive(object){
+		// 对reactivties进行判断，如果已经缓存了，
+		if(reactivties.has(object)){
+			return reactivties.get(object)
+		}
+
+		let proxy = new Proxy(object, {
+			set(obj, prop, val){
+				obj[prop] = val
+				if(callbacks.get(obj))
+					if(callbacks.get(obj).get(prop))
+						for(let callback of callbacks.get(obj).get(prop)){
+							callback()
+						}
+				return obj[prop]
+			},
+			get(obj, prop){
+				// 当prop是对象时，套一个reactive
+				if(typeof obj[prop] === 'object'){
+					return reactive(obj[prop])
+				}
+				useReactivties.push([obj, prop]);// 这样在effect执行后就知道调用哪些变量了
+				return obj[prop]
+			}
+		})
+
+		reactivties.set(object, proxy);
+		return proxy;
+	}
+
+	
+	// 
+</script>

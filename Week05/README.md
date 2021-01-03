@@ -25,3 +25,35 @@ let po = new Proxy(object, {
 - 可以对apply、defineProperty、deleteProperty拦截并改变行为
 - 对原始object去设置值，并不会触发proxy上hook的函数，只有po才会执行proxy的行为
 - 所以，使用po后会对对象的行为可预测性降低
+
+### effect
+方法，可以对对象进行监听，当callback时，会执行effect里的内容。
+```
+let callbacks = [];
+
+// 添加监听，可用addEventListener，也可用effect
+effect(()=>{
+	// 但存在性能问题，传入100个会都回调。优化：只有在对应变量变化时，再触发函数调用
+	console.log(po.a)
+})
+
+function effect(callback){
+	callbacks.push(callback) // callbacks,外层数组
+}
+
+// 使用
+set(obj, prop, val){
+	obj[prop] = val
+	// 此处使用，callbacks为外层设置的数组，用于存储
+	for(let callback of callbacks){
+		callback()
+	}
+	return obj[prop]
+},
+```
+
+
+### reactive
+- 半成品的双向绑定
+- 从数据到dom的监听
+- native to reactive
