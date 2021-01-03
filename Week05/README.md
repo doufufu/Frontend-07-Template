@@ -60,6 +60,7 @@ set(obj, prop, val){
 - 实现0代码编写mvvm监听
 
 ### dragable
+核心range、CSSOM
 ```
 // mousemove 、mouseup事件，需要在mousedown里面去监听，保证前提是鼠标已经按下去才触发。
 // 如果用flag判断mousedown，性能差一点，需要多执行一遍函数
@@ -69,4 +70,5 @@ startX 记录鼠标原点(event.x, event.y)
 最终移动点
 baseX + startX - current.event.x
 ```
-range.insertNode(dragable);// 不需要以前的移除，默认会把原来的元素移除
+- range.insertNode(dragable);// 不需要以前的移除，默认会把原来的元素移除
+- range.getBoundingClientRect()// 返回元素的大小及其相对于视口的位置
