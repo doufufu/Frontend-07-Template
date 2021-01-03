@@ -1,4 +1,7 @@
-<input id='r' />
+<input id='r' type='range' min=0 max=255 />
+<input id='g' type='range' min=0 max=255 />
+<input id='b' type='range' min=0 max=255 />
+<div id="color" style="width: 100px;height: 30px"></div>
 <script type="text/javascript">
 
 	let callbacks = new Map();// 替换成new Map，来存储useReactivties, 用object作为key去查reactivties
@@ -9,14 +12,30 @@
 
 	let object = {
 		r: 1,
+		g: 1,
+		b: 1
 	}
 
 	let po = reactive(object)
 
 	effect(()=>{
-		console.log(po.a)
+		document.getElementById("r").value = po.r;
+	})
+	effect(()=>{
+		document.getElementById("g").value = po.g;
+	})
+	effect(()=>{
+		document.getElementById("b").value = po.b;
 	})
 
+	document.getElementById("r").addEventListener("input", event => po.r = event.target.value);
+	document.getElementById("g").addEventListener("input", event => po.g = event.target.value);
+	document.getElementById("b").addEventListener("input", event => po.b = event.target.value);
+
+	effect(()=>{
+		document.getElementById("color").style.backgroundColor = `rgb(${po.r},${po.g},${po.b})`;
+	})
+	
 	// 获取函数调用了object里的哪些属性
 	function effect(callback){
 		// callbacks.push(callback) 替换

@@ -57,3 +57,4 @@ set(obj, prop, val){
 - 半成品的双向绑定
 - 从数据到dom的监听
 - native to reactive
+- 实现0代码编写mvvm监听
